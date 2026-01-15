@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>떡볶이창고 주문 메모장</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>🍤 튀김 주문 대장</h1>
+      <button class="btn-main" onclick="createNewOrder()">+ 새 주문 생성</button>
+
+      <div id="activeOrders"></div>
+
+      <div class="history-section">
+        <details>
+          <summary>완료된 주문 보기 (클릭)</summary>
+          <div id="completedOrders"></div>
+        </details>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
