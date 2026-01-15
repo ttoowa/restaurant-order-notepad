@@ -221,3 +221,15 @@ details summary {
     color: var(--secondary);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* 모든 버튼과 클릭 가능한 요소에 추가 */
+button, .item-tag {
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    transition: 0.2s;
+    font-weight: bold;
+
+    /* 더블 탭 확대 대기 시간을 없애주는 핵심 속성 */
+    touch-action: manipulation;
+}

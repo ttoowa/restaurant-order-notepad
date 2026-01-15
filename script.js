@@ -70,11 +70,7 @@ function removeItem(orderId, itemName) {
   const card = document.getElementById(orderId);
   if (card.parentElement.id === "completedOrders") return;
   const selectedItems = JSON.parse(card.dataset.items);
-  if (selectedItems[itemName] > 1) {
-    selectedItems[itemName] -= 1;
-  } else {
-    delete selectedItems[itemName];
-  }
+  delete selectedItems[itemName];
   card.dataset.items = JSON.stringify(selectedItems);
   renderItems(orderId, selectedItems);
 }
