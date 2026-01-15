@@ -89,15 +89,28 @@ button {
     display: none;
 }
 
+/* 일반 메뉴 버튼 스타일 (기본) */
 .menu-btn {
     flex: 0 1 auto;
-    /* 내용에 맞춰 크기 조절 */
     background: #f1f3f5;
-    padding: 10px 14px;
-    /* 모바일에서 터치하기 편하게 약간 키움 */
+    padding: 12px 14px;
     font-size: 0.9rem;
     border: 1px solid #e9ecef;
     border-radius: 6px;
+    touch-action: manipulation;
+}
+
+/* 새우, 고추, 깻잎 전용 강조 스타일 */
+.menu-btn.highlight {
+    background: #e3f2fd;
+    /* 연한 파란색 배경 */
+    border-color: #90caf9;
+    color: #1565c0;
+    /* 진한 파란색 글자 */
+}
+
+.menu-btn.highlight:active {
+    background: #bbdefb;
 }
 
 .menu-btn:active {
@@ -231,5 +244,27 @@ button, .item-tag {
     font-weight: bold;
 
     /* 더블 탭 확대 대기 시간을 없애주는 핵심 속성 */
+    touch-action: manipulation;
+}
+
+/* 튀김 수량 강조 스타일 */
+.count-text {
+    color: #ff808b;
+    /* 붉은색 */
+    font-weight: 800;
+    margin-left: 4px;
+}
+
+/* 기존 item-tag 스타일 유지 및 보강 */
+.item-tag {
+    display: inline-flex;
+    align-items: center;
+    background: var(--secondary);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
     touch-action: manipulation;
 }

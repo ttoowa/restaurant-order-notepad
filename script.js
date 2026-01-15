@@ -1,5 +1,6 @@
 let orderCount = 0;
-const menuItems = ["오징어", "고구마", "만두", "김말이", "야채", "새우", "고추", "깻잎"];
+const specialMenus = ["새우", "고추", "깻잎"];
+const menuItems = ["기본세트", "오징어", "고구마", "만두", "김말이", "야채", "새우", "고추", "깻잎"];
 const orderTypes = ["포장", "배달", "홀"];
 
 function createNewOrder() {
@@ -11,16 +12,17 @@ function createNewOrder() {
   card.className = "order-card";
   card.id = orderId;
 
-  const menuButtons = menuItems.map((item) => `<button class="menu-btn" onclick="addItem('${orderId}', '${item}')">${item}</button>`).join("");
+  // 1. 버튼 문자열 생성 (인라인 클릭 삭제)
 
-  // 옵션 버튼 생성 (기본값: 포장)
-  const typeButtons = orderTypes
-    .map(
-      (type) =>
-        `<button class="type-btn ${type === "포장" ? "active" : ""}" 
-                 onclick="setType('${orderId}', this)">${type}</button>`
-    )
+  const menuButtonsHtml = menuItems
+    .map((item) => {
+      // 해당 아이템이 강조 메뉴에 포함되는지 확인
+      const highlightClass = specialMenus.includes(item) ? "highlight" : "";
+      return `<button class="menu-btn ${highlightClass}" data-item="${item}">${item}</button>`;
+    })
     .join("");
+
+  const typeButtons = orderTypes.map((type) => `<button class="type-btn ${type === "포장" ? "active" : ""}" data-type="${type}">${type}</button>`).join("");
 
   card.innerHTML = `
         <div class="order-content">
@@ -31,14 +33,41 @@ function createNewOrder() {
                 </div>
             </div>
             <div class="menu-bar">
-                ${menuButtons}
+                ${menuButtonsHtml}
             </div>
             <div class="selected-list" id="list-${orderId}">
                 <span style="color:#aaa; font-size:0.8rem;">튀김을 선택해 주세요.</span>
             </div>
         </div>
-        <button class="done-btn" onclick="completeOrder('${orderId}')">완료</button>
+        <button class="done-btn">완료</button>
     `;
+
+  // 2. 이벤트 리스너 직접 할당 (반응성 최적화)
+  const handleAction = (e, callback) => {
+    // 모바일/웹 통합 대응: pointerup 사용
+    // 클릭 후 잔상 방지 및 연속 클릭 최적화
+    e.preventDefault();
+    callback();
+  };
+
+  // 메뉴 버튼 이벤트 바인딩
+  card.querySelectorAll(".menu-btn").forEach((btn) => {
+    const itemName = btn.dataset.item;
+    btn.addEventListener("pointerup", (e) => handleAction(e, () => addItem(orderId, itemName)));
+    // PC 환경 브라우저 호환성을 위해 클릭 중복 방지 처리된 리스너
+    btn.addEventListener("click", (e) => e.preventDefault());
+  });
+
+  // 타입 버튼 이벤트 바인딩
+  card.querySelectorAll(".type-btn").forEach((btn) => {
+    btn.addEventListener("pointerup", (e) => handleAction(e, () => setType(orderId, btn)));
+    btn.addEventListener("click", (e) => e.preventDefault());
+  });
+
+  // 완료 버튼 이벤트 바인딩
+  card.querySelector(".done-btn").addEventListener("pointerup", (e) => {
+    handleAction(e, () => completeOrder(orderId));
+  });
 
   activeOrders.prepend(card);
   card.dataset.items = JSON.stringify({});
@@ -77,20 +106,29 @@ function removeItem(orderId, itemName) {
 
 function renderItems(orderId, items) {
   const listDiv = document.getElementById(`list-${orderId}`);
+  if (!listDiv) return;
+
   listDiv.innerHTML = "";
   const entries = Object.entries(items);
+
   if (entries.length === 0) {
     listDiv.innerHTML = '<span style="color:#aaa; font-size:0.8rem;">튀김을 선택해 주세요.</span>';
     return;
   }
+
   entries.forEach(([name, count]) => {
     const span = document.createElement("span");
     span.className = "item-tag";
-    span.innerText = `${name} x${count}`;
-    span.onclick = (e) => {
-      e.stopPropagation();
+
+    // 이름은 흰색(기본), 숫자는 count-text 클래스를 통해 붉은색으로 표시
+    span.innerHTML = `${name} <span class="count-text">x${count}</span>`;
+
+    // 클릭 시 제거 기능 (pointerup 이벤트 권장)
+    span.addEventListener("pointerup", (e) => {
+      e.preventDefault();
       removeItem(orderId, name);
-    };
+    });
+
     listDiv.appendChild(span);
   });
 }
